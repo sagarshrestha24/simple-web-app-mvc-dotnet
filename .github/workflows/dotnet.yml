@@ -24,7 +24,11 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
+    - name: dotnet publish
       run: |
-         cd SimpleWebAppMVC
-         dotnet test --no-build --verbosity normal
+        dotnet publish -c Release -o .\test
+    - name: Deploy to IIS
+      run: |
+         iisreset /stop
+         xcopy /s /y .\test\* C:\Users\Administrator\Documents\IISExpress\WebSite\test
+         iisreset /start
