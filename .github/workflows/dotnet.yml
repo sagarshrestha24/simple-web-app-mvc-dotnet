@@ -9,7 +9,7 @@ on:
 
 jobs:
   dev_deploy:
-    runs-on: [self-hosted, development]
+    runs-on: [self-hosted, dev]
     if: endswith(github.ref, 'dev')
     steps:
     - uses: actions/checkout@v4
