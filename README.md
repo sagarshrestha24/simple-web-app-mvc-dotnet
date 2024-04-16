@@ -35,9 +35,7 @@ on:
 
 jobs:
   build:
-
     runs-on: self-hosted
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -47,7 +45,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore 
+
+  deploy: 
+    needs: build
+    runs-on: self-hosted
+    steps:
     - name: dotnet publish
       run: |
         dotnet build 
