@@ -114,3 +114,42 @@ The build steps starts off by running a git checkout followed by a restoring, bu
 
 
 
+## Deploying to Multiple Environments with GitHub Actions
+
+Deploying to multiple environments with GitHub Actions can streamline your software development workflow. Here's a general outline of how you can set it up:
+
+   - Define Your Environments: Decide on the environments you want to deploy to, such as development, staging, and production.
+
+   - Configure GitHub Actions Workflow: Create a workflow file (e.g., .github/workflows/deploy.yml) in your repository's .github/workflows directory. This file defines the steps that GitHub Actions will take when triggered.
+
+   - Set Up Environment Variables: Define environment-specific variables such as API keys, database connection strings, etc., as secrets in your repository's settings. You can set different values for each environment.
+
+   - Build and Test: Before deploying, ensure that your code passes all tests and build processes. You can include steps for building and testing your application in the workflow file.
+
+   - Deploy to Each Environment:
+       - Development: Deploy automatically on every push to the development branch.
+       - Staging: Trigger deployment manually or automatically after successful testing on the staging branch.
+       - Production: Trigger deployment manually or automatically after approval on the production branch.
+
+
+ Lets break it down workflow file
+ 
+```
+on:
+  push:
+    branches: [ master, dev, uat ]
+```
+This part of the file defines the trigger for the workflow. It specifies that the workflow will run on any push to the master, dev, or uat branches.
+
+```
+jobs:
+  dev_deploy:
+    runs-on: [self-hosted, dev]
+    if: endswith(github.ref, 'dev')
+```
+Here, a job named dev_deploy is defined. It specifies that this job will run on a self-hosted runner tagged with dev. Additionally, it's conditioned to run only if the branch pushed ends with 'dev'.
+
+The runs-on field in GitHub Actions specifies the type of runner on which the job should execute. When you specify [self-hosted, dev], you're indicating that the job should run on a self-hosted runner with the tag dev. If you want to run the job on multiple runners with different tags, you need to use a custom labels like prod and uat for other environment.
+
+
+
