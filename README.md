@@ -59,3 +59,9 @@ jobs:
          iisreset /start
 ```
 
+What this configuration does, is that it listens on the master branch, whenever changes are pushed it will start our self-hosted runner and begin the build process using cmd as the preffered shell as I've previously had issues with using Windows Powershell and Powershell 7.
+
+The build steps starts off by running a git checkout followed by a restoring, building and testing the project. Once that's all done it will stop our website (in this case example.com) to ensure that the following publish will work without issues.
+
+
+
