@@ -33,7 +33,7 @@ jobs:
 
   uat_deploy: 
     runs-on: [self-hosted, uat]
-    if: endswith(github.ref, 'master')
+    if: endswith(github.ref, 'uat')
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -55,7 +55,7 @@ jobs:
          iisreset /start
   prod_deploy: 
     runs-on: [self-hosted, production]
-    if: endswith(github.ref, 'uat')
+    if: endswith(github.ref, 'master')
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
