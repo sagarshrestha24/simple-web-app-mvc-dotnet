@@ -29,13 +29,19 @@ Now let's edit the action like the following
 ```
 name: .NET
 
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
 on:
   push:
-    branches: [ "master" ]
+    branches: [ master, dev, uat ]
 
 jobs:
-  build:
-    runs-on: self-hosted
+  dev_deploy:
+    runs-on: [self-hosted, dev]
+    if: endswith(github.ref, 'dev')
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -46,11 +52,51 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore 
+    # - name: dotnet publish
+    #   run: |
+    #     dotnet build 
+    #     dotnet publish -c Release -o .\test
+    # - name: Deploy to IIS
+    #   run: |
+    #      iisreset /stop
+    #      xcopy /s /y .\test\* C:\Users\Administrator\Documents\IISExpress\WebSite\test
+    #      iisreset /start
 
-  deploy: 
-    needs: build
-    runs-on: self-hosted
+  uat_deploy: 
+    runs-on: [self-hosted, uat]
+    if: endswith(github.ref, 'uat')
     steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore 
+    - name: dotnet publish
+      run: |
+        dotnet build 
+        dotnet publish -c Release -o .\test
+    - name: Deploy to IIS
+      run: |
+         iisreset /stop
+         xcopy /s /y .\test\* C:\Users\Administrator\Documents\IISExpress\WebSite\test
+         iisreset /start
+  prod_deploy: 
+    runs-on: [self-hosted, production]
+    if: endswith(github.ref, 'master')
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore 
     - name: dotnet publish
       run: |
         dotnet build 
